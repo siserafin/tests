@@ -1,0 +1,7 @@
+apiVersion: v1alpha1
+kind: Repository
+metadata:
+  name: tests
+spec:
+  repo: https://github.com/sserafin/tests.git
+
