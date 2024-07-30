@@ -38,7 +38,7 @@ spec:
           alertRules:
             - severity: Warning
               duration: 10m
-              percentage: 50
+              percentage: 60
               description: 'CPU load is above 50% for more than 10 minutes'
           samplingInterval: 50s
       systemd:
