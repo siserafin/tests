@@ -1,0 +1,47 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: test
+spec:
+  selector:
+    matchLabels:
+      fleet: test
+  template:
+    metadata:
+      labels:
+        fleet: test
+    spec:
+      os:
+        image: quay.io/redhat/rhde:9.2
+      config:
+        - name: configa
+          configType: GitConfigProviderSpec
+          gitRef:
+            repository: tests
+            targetRevision: main
+            path: /
+        - name: motd-update
+          configType: InlineConfigProviderSpec
+          inline:
+            ignition:
+              version: 3.4.0
+            storage:
+              files:
+                - contents:
+                    source: >-
+                      data:,This%20system%20is%20managed%20by%20flightctl.%0A
+                  mode: 422
+                  overwrite: true
+                  path: "/etc/motd"
+      resources:
+        - monitorType: CPU
+          alertRules:
+            - severity: Warning
+              duration: 15m
+              percentage: 30
+              description: 'CPU load is above 50% for more than 10 minutes'
+          samplingInterval: 50s
+      systemd:
+        matchPatterns:
+          - chronyd.service
+
