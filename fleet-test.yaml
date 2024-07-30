@@ -40,7 +40,7 @@ spec:
               duration: 10m
               percentage: 50
               description: 'CPU load is above 50% for more than 10 minutes'
-          samplingInterval: 40s
+          samplingInterval: 50s
       systemd:
         matchPatterns:
           - chronyd.service
