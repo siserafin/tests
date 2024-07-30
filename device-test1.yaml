@@ -1,0 +1,9 @@
+apiVersion: v1alpha1
+kind: Device
+metadata:
+  name: test-device-name1 
+  labels:
+    fleet: test
+    team: b 
+    novalue: ""
+
