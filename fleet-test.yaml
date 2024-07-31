@@ -12,7 +12,7 @@ spec:
         fleet: test
     spec:
       os:
-        image: quay.io/redhat/rhde:9.2
+        image: quay.io/redhat/rhde:{{index .device.metadata.labels `team` }}
       config:
         - name: base
           configType: GitConfigProviderSpec
