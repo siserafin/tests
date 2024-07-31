@@ -3,5 +3,6 @@ kind: Repository
 metadata:
   name: tests
 spec:
-  repo: https://github.com/sserafin/tests.git
-
+  url: https://github.com/siserafin/tests.git
+  type: git
+~                 

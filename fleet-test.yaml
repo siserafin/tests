@@ -29,7 +29,7 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:,i{{index .device.metadata.labels `team` }}This%20system%20is%20managed%20by%20flightctl.%0A
+                      data:,i{{index .device.metadata.labels `team` }}Team%20{{ index .device.metadata.labels `team` }}%20is%20managed%20by%20flightctl.%0A
                   mode: 422
                   overwrite: true
                   path: "/etc/motd"
