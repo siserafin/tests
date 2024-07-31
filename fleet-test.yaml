@@ -12,14 +12,14 @@ spec:
         fleet: test
     spec:
       os:
-        image: quay.io/redhat/rhde:{{index .device.metadata.labels `team` }}
+        image: quay.io/redhat/rhde:2.9
       config:
         - name: base
           configType: GitConfigProviderSpec
           gitRef:
             repository: tests
             targetRevision: main
-            path: /
+            path: "/{{index .device.metadata.labels `team` }}"
         - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
