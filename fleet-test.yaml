@@ -19,7 +19,7 @@ spec:
           gitRef:
             repository: tests
             targetRevision: main
-            path: "/{{ device.metadata.labels[team] }}"
+            path: "/fleet-test.yaml"
         - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
@@ -29,7 +29,7 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:,iTeam%20{{ device.metadata.name }}%20is%20managed%20by%20flightctl.%0A
+                      data:,iTeam%20Hi%20is%20managed%20by%20flightctl.%0A
                   mode: 422
                   overwrite: true
                   path: "/etc/motd"
