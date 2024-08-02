@@ -12,14 +12,14 @@ spec:
         fleet: test
     spec:
       os:
-        image: quay.io/redhat/rhde:2.9
+        image: 192.168.1.101:5000/flightctl-device:v2
       config:
         - name: base
           configType: GitConfigProviderSpec
           gitRef:
             repository: tests
             targetRevision: main
-            path: "/{{index .device.metadata.labels `team` }}"
+            path: "/{{ device.metadata.labels[team] }}"
         - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
@@ -29,7 +29,7 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:,i{{index .device.metadata.labels `team` }}Team%20{{ index .device.metadata.labels `team` }}%20is%20managed%20by%20flightctl.%0A
+                      data:,iTeam%20{{ device.metadata.name }}%20is%20managed%20by%20flightctl.%0A
                   mode: 422
                   overwrite: true
                   path: "/etc/motd"
@@ -44,4 +44,3 @@ spec:
       systemd:
         matchPatterns:
           - chronyd.service
-
