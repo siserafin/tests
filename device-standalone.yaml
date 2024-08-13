@@ -1,0 +1,46 @@
+apiVersion: v1alpha1
+kind: Device
+metadata:
+  annotations:
+    device-controller/renderedVersion: "1"
+  creationTimestamp: "2024-08-05T15:15:18.979472Z"
+  generation: 1
+  labels: {}
+  name: uu0kik51sligpph347280hh54qdbke3bsta119lf1m1l546bcr5g
+spec: 
+  os:
+    image: 192.168.1.8:5000/flightctl-device:v2
+status:
+  applications:
+    data: {}
+    summary:
+      status: Unknown
+  conditions:
+  - lastTransitionTime: "2024-08-05T15:15:18.993355801Z"
+    message: ""
+    reason: Valid
+    status: "True"
+    type: SpecValid
+  config:
+    renderedVersion: ""
+  integrity:
+    summary:
+      status: Unknown
+  lastSeen: "2024-08-05T15:15:40.053496814Z"
+  os:
+    image: 192.168.1.8:5000/flightctl-device:base
+  resources:
+    cpu: Healthy
+    disk: Healthy
+    memory: Healthy
+  summary:
+    info: Bootstrap complete
+    status: Online
+  systemInfo:
+    architecture: amd64
+    bootID: |
+      0b984c8e-a64b-4bd1-8f39-5c029a6b091b
+    operatingSystem: linux
+  updated:
+    status: Unknown
+

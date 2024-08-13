@@ -4,5 +4,4 @@ metadata:
   name: tests
 spec:
   url: https://github.com/siserafin/tests.git
-  type: git
-~                 
+  type: git 

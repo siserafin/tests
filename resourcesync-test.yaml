@@ -1,0 +1,9 @@
+apiVersion: v1alpha1
+kind: ResourceSync
+metadata:
+  name: test-sync
+spec:
+  repository: tests
+  path: /fleet-test.yaml
+  targetRevision: main
+

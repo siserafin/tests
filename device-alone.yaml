@@ -1,7 +1,7 @@
 apiVersion: v1alpha1
 kind: Device
 metadata:
-  name: test-device-alone-name 
+  name: test-device-standalone
   labels:
     team: a
-    novalue: ""
+
