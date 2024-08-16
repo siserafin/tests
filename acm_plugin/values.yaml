@@ -1,0 +1,68 @@
+flightctl:
+  db:
+    namespace: flightctl-internal
+    image: quay.io/sclorg/postgresql-12-c8s:latest
+    imagePullPolicy: Always
+    password: adminpass
+    masterPassword: adminpass
+    masterUser: admin
+    user: demouser
+    userPassword: demopass
+  api:
+    enabled: true
+    namespace: flightctl-external
+    image: quay.io/flightctl/flightctl-api
+    imagePullPolicy: Always
+    hostName: api.apps.cs-aws-415-7rqlq.dev02.red-chesterfield.com
+    agentAPIHostName: agent-api.apps.cs-aws-415-7rqlq.dev02.red-chesterfield.com
+    agentGrpcHostName: agent-grpc.apps.cs-aws-415-7rqlq.dev02.red-chesterfield.com
+    agentGrpcBaseURL: grpcs://agent-grpc.apps.cs-aws-415-7rqlq.dev02.red-chesterfield.com
+    auth:
+      ## @param enabled True if auth should be enabled. One of 'openShiftApiUrl' or 'oidcAuthority' params will be required.
+      enabled: false
+      ## @param openShiftApiUrl the API URL of OpenShift cluster. This will enable OCP auth. Example: https://api.foo.openshiftapps.com:6443/
+      openShiftApiUrl: "" 
+  worker:
+    enabled: true
+    namespace: flightctl-internal
+    image: quay.io/flightctl/flightctl-worker
+    imagePullPolicy: Always
+    enableSecretsClusterRoleBinding: true
+  periodic:
+    enabled: true
+    namespace: flightctl-internal
+    image: quay.io/flightctl/flightctl-periodic
+    imagePullPolicy: Always
+  rabbitmq:
+    enabled: true
+    name: flightctl-rabbitmq
+    namespace: flightctl-internal
+    replicaCount: 1
+    image: docker.io/library/rabbitmq:3.13-management
+    imagePullPolicy: IfNotPresent
+    ports:
+      amqp: 5672
+      management: 15672
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 10Gi
+    auth:
+      username: user
+      password: password
+    service:
+      type: ClusterIP
+      amqpPort: 5672
+      managementPort: 15672
+
+
+storageClassName: gp3-csi
+storageClassNameRWM: gp3-csi
+
+
+# This is only related to deployment in Red Hat's PAAS
+appCode: MYAPP
+
+keycloak:
+  enabled: false
+

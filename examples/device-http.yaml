@@ -1,7 +1,7 @@
 apiVersion: v1alpha1
 kind: Device
 metadata:
-  name: g73jb8d440h8ci6mcjqabsbn4f0h80psfpcmts8t967dblpi8vo0
+  name: f68dfb5f5d2cdbb9339363b7f19f3ce269d75650bdc80004f1e04293a8ef9c4
   labels:
     fleet: none
 spec:

@@ -1,0 +1,21 @@
+flightctlUi:
+  image: quay.io/flightctl/flightctl-ocp-ui:latest
+  flightctlServer: https://flightctl-api:3443
+  flightctlMetricsServer: https://flightctl-api:9090
+  bootcImgUrl: quay.io/example/example-agent-centos:bootstrap
+  qcow2ImgUrl: https://example.com/disk.qcow2
+  namespace: flightctl-external
+  certs:
+	ca: |
+  	-----BEGIN CERTIFICATE-----
+  	MIIBizCCATGgAwIBAgIIO9fd4H+xXtowCgYIKoZIzj0EAwIwDTELMAkGA1UEAxMC
+  	Y2EwHhcNMjQwODE2MTYxOTI4WhcNMzQwODE0MTYxOTI5WjANMQswCQYDVQQDEwJj
+  	YTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABMB2bREIUdtcuH5RpEgVU8pSHV7p
+  	wEORhxaTcumAqv5np54jGvhVWkkGzaAW6AYP+OQBAKB0+Kp8+RCMhQLF41OjezB5
+  	MA4GA1UdDwEB/wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MCkGA1UdDgQiBCASSB0+
+  	eLdQABEhfk+kMNtlhHwY0t7hG/PP90yAhbd2CTArBgNVHSMEJDAigCASSB0+eLdQ
+  	ABEhfk+kMNtlhHwY0t7hG/PP90yAhbd2CTAKBggqhkjOPQQDAgNIADBFAiEAi/tW
+  	/JKTdWrO8gelGjm1KcEya7ba47E2FpdBTBK4KcACIDlaWQOYkT13vig16Ek4YZEJ
+  	o/yIypLAqTB6SkqEhS1S
+  	-----END CERTIFICATE-----
+
