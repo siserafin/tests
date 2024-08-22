@@ -12,7 +12,7 @@ spec:
         fleet: test-templating
     spec:
       os:
-        image: quay.io/sserafin/flightctl-agent-centos:latest 
+        image: quay.io/sserafin/flightctl-agent-centos:v3 
       config: []
       resources:
         - monitorType: CPU
