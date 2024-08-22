@@ -1,0 +1,54 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: test-templating
+spec:
+  selector:
+    matchLabels:
+      fleet: test-templating
+  template:
+    metadata:
+      labels:
+        fleet: test-templating
+    spec:
+      os:
+        image: 192.168.1.15:5000/flightctl-device:base
+      config:
+        - name: simple-app
+          configType: InlineConfigProviderSpec
+          inline:
+            ignition:
+              version: 3.4.0
+            storage:
+              files:
+                - contents:
+                    source: >-
+                      data:text/plain;base64,ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHNlbmRfZmlsZSwgYWJvcnQKaW1wb3J0IG9zCgphcHAgPSBGbGFzayhfX25hbWVfXykKCiMgRGVmaW5lIHRoZSBwYXRoIHRvIHRoZSBZQU1MIGZpbGUKdjFfeWFtbF9maWxlX3BhdGggPSAnY29uZmlnL3YxL2RldmljZS1jb25maWcueWFtbCcKdjJfeWFtbF9maWxlX3BhdGggPSAnY29uZmlnL3YyL2RldmljZS1jb25maWcueWFtbCcKCmRlZiBnZXRfeWFtbF9maWxlKGZpbGVuYW1lKToKICAgICMgQ2hlY2sgaWYgdGhlIGZpbGUgZXhpc3RzCiAgICBpZiBvcy5wYXRoLmV4aXN0cyhmaWxlbmFtZSk6CiAgICAgICAgIyBTZW5kIHRoZSBZQU1MIGZpbGUgdG8gdGhlIGNsaWVudAogICAgICAgIHJldHVybiBzZW5kX2ZpbGUoZmlsZW5hbWUsIG1pbWV0eXBlPSdhcHBsaWNhdGlvbi94LXlhbWwnKQogICAgZWxzZToKICAgICAgICAjIFJldHVybiBhIDQwNCBlcnJvciBpZiB0aGUgZmlsZSBpcyBub3QgZm91bmQKICAgICAgICBhYm9ydCg0MDQsIGRlc2NyaXB0aW9uPSJZQU1MIGZpbGUgbm90IGZvdW5kIikKCkBhcHAucm91dGUoJy9hZ2VudC1yZWdpc3RyYXRpb24vY3Jkcy92MScsIG1ldGhvZHM9WydHRVQnXSkKZGVmIGdldF92MV95YW1sX2ZpbGUoKToKICAgIHJldHVybiAgIkhlbGxvLCBXb3JsZCEiCgpAYXBwLnJvdXRlKCcvYWdlbnQtcmVnaXN0cmF0aW9uL2NyZHMvdjInLCBtZXRob2RzPVsnR0VUJ10pCmRlZiBnZXRfdjJfeWFtbF9maWxlKCk6CiAgICByZXR1cm4gZ2V0X3lhbWxfZmlsZSh2Ml95YW1sX2ZpbGVfcGF0aCkKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKGRlYnVnPVRydWUsIGhvc3Q9JzAuMC4wLjAnLCBwb3J0PTQwMDApCgo=
+                  mode: 422
+                  overwrite: true
+                  path: "/var/run/flightctl/compose/app.py"
+        - name: simple-app-compose
+          configType: InlineConfigProviderSpec
+          inline:
+            ignition:
+              version: 3.4.0
+            storage:
+              files:
+                - contents:
+                    source: >-
+                      data:text/plain;base64,dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGJ1aWxkOgogICAgICBjb250ZXh0OiAuCiAgICAgIGRvY2tlcmZpbGU6IENvbnRhaW5lcmZpbGUKICAgIGNvbnRhaW5lcl9uYW1lOiBmbGFzay13ZWJhcHAKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBlbnZpcm9ubWVudDoKICAgICAgLSBGTEFTS19BUFA9YXBwLnB5CiAgICAgIC0gRkxBU0tfRU5WPWRldmVsb3BtZW50CiAgICB2b2x1bWVzOgogICAgICAtIC46L2FwcDpaICAjIEVuc3VyZSB0aGUgY29ycmVjdCBTRUxpbnV4IGNvbnRleHQgaWYgbmVjZXNzYXJ5Cgo=
+                  mode: 422
+                  overwrite: true
+                  path: "/var/run/flightctl/compose/podman-compose.yml"
+      resources:
+        - monitorType: CPU
+          alertRules:
+            - severity: Warning
+              duration: 10m
+              percentage: 60
+              description: 'CPU load is above 50% for more than 10 minutes'
+          samplingInterval: 50s
+      systemd:
+        matchPatterns:
+          - chronyd.service
+

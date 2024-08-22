@@ -18,7 +18,7 @@ def get_yaml_file(filename):
 
 @app.route('/agent-registration/crds/v1', methods=['GET'])
 def get_v1_yaml_file():
-    return  "Hello, World!"
+    return get_yaml_file(v1_yaml_file_path)
 
 @app.route('/agent-registration/crds/v2', methods=['GET'])
 def get_v2_yaml_file():

@@ -1,26 +1,20 @@
 apiVersion: v1alpha1
 kind: Fleet
 metadata:
-  name: test
+  name: test-templating
 spec:
   selector:
     matchLabels:
-      fleet: test
+      fleet: test-templating
   template:
     metadata:
       labels:
-        fleet: test
+        fleet: test-templating
     spec:
       os:
-        image: quay.io/redhat/rhde:9.2
+        image: 192.168.1.15:5000/flightctl-device:v3
       config:
-        - name: base
-          configType: GitConfigProviderSpec
-          gitRef:
-            repository: tests
-            targetRevision: main
-            path: "/fleet-test.yaml"
-        - name: motd-update
+        - name: simple-app
           configType: InlineConfigProviderSpec
           inline:
             ignition:
@@ -29,10 +23,10 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:,iTeam%20Hi%20is%20managed%20by%20flightctl.%0A
+                      data:text/plain;base64,dmVyc2lvbjogJzMuOScKCnNlcnZpY2VzOgogIHNoOgogICAgaW1hZ2U6IHF1YXkuaW8vc3NlcmFmaW4vdGVzdDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBjb21tYW5kOiBbInB5dGhvbiIsICJhcHAucHkiXQo=
                   mode: 422
                   overwrite: true
-                  path: "/etc/motd"
+                  path: "/var/run/flightctl/compose/compose.yml"
       resources:
         - monitorType: CPU
           alertRules:
