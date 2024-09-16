@@ -1,0 +1,116 @@
+---
+- name: Install flightctl predeploy
+  hosts: "{{ 'provisionhost[0]' if groups.get('provisionhost') else 'localhost' }}"
+  gather_facts: true
+  vars:
+    helm_version: "3.15.3"
+    helm_download_url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    helm_install_path: "/usr/local/bin"
+    flightctl_repo: "https://github.com/flightctl/flightctl"
+    go_version: "1.22.5"
+    go_download_url: "https://dl.google.com/go/go{{ go_version }}.linux-amd64.tar.gz"
+    go_install_path: "/usr/local"
+    epel_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+  environment:
+    PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
+    GOPATH: "/usr/local/go"
+  tasks:
+    - name: Download Go tarball
+      ansible.builtin.get_url:
+        url: "{{ go_download_url }}"
+        dest: "/tmp/go{{ go_version }}.linux-amd64.tar.gz"
+        mode: '0644'
+
+    - name: Remove any existing Go installation
+      become: true
+      ansible.builtin.file:
+        path: "{{ go_install_path }}/go"
+        state: absent
+
+    - name: Extract Go tarball
+      become: true
+      ansible.builtin.unarchive:
+        src: "/tmp/go{{ go_version }}.linux-amd64.tar.gz"
+        dest: "{{ go_install_path }}"
+        remote_src: yes
+
+    - name: Ensure Go binary path is in the environment
+      ansible.builtin.shell: |
+        "export PATH=$PATH:/usr/local/go/bin:/usr/local/bin"
+
+    - name: Verify Go installation
+      ansible.builtin.command: |
+        'go version'
+      register: go_version_output
+      changed_when: false
+
+    - name: Display Go version
+      ansible.builtin.debug:
+        msg: "{{ go_version_output.stdout }}"
+
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: "/tmp/go{{ go_version }}.linux-amd64.tar.gz"
+        state: absent
+
+    - name: Install prerequisites
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - openssl
+          - openssl-devel
+          - podman
+        state: latest
+
+    - name: Download Helm tarball
+      ansible.builtin.get_url:
+        url: "{{ helm_download_url }}"
+        dest: "/tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+        mode: '0644'
+
+    - name: Extract Helm tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Move Helm binary to installation path
+      become: true
+      ansible.builtin.copy:
+        src: "/tmp/linux-amd64/helm"
+        dest: "{{ helm_install_path }}/helm"
+        mode: '0755'
+
+    - name: Verify Helm installation
+      ansible.builtin.shell: |
+        "helm version"
+      register: helm_version_output
+      changed_when: false
+
+    - name: Display Helm version
+      ansible.builtin.debug:
+        msg: "{{ helm_version_output.stdout }}"
+
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: /tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz
+        state: absent
+
+    - name: Remove extracted directory
+      ansible.builtin.file:
+        path: /tmp/linux-amd64
+        state: absent
+
+    - name: Install EPEL release
+      become: true
+      ansible.builtin.dnf:
+        name: "{{ epel_url }}"
+        state: present
+        disable_gpg_check: true
+
+    - name: Clone flightctl repository
+      ansible.builtin.git:
+        repo: "{{ flightctl_repo }}"
+        dest: /home/kni/flightctl
+        update: yes
+      ignore_errors: true
