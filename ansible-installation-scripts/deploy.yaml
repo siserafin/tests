@@ -18,6 +18,11 @@
     PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
     KUBECONFIG: "{{ kubeconfig_path }}"
   tasks:
+    - name: Copy myvalues.yaml to ~/flightctl/deploy/helm/flightctl/myvalues.yaml
+      ansible.builtin.copy:
+        src: /home/kni/myvalues.yaml           
+        dest: /home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml
+
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
         helm install --version={{ flightctl_version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
