@@ -6,6 +6,7 @@
   vars:
     kubeconfig_path: "/home/kni/clusterconfigs/auth/kubeconfig"
     values_file: "/home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml"
+    myvalues_file: "/home/kni/myvalues.yaml"
     flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
     flightctl_ui_image_url: "oci://quay.io/flightctl/charts/flightctl-ocp-ui"
     flightctl_namespace: "flightctl"
@@ -20,8 +21,8 @@
   tasks:
     - name: Copy myvalues.yaml to ~/flightctl/deploy/helm/flightctl/myvalues.yaml
       ansible.builtin.copy:
-        src: /home/kni/myvalues.yaml           
-        dest: /home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml
+        src: "{{ myvalues_file }}"
+        dest: /home/kni//flightctl/deploy/helm/flightctl/myvalues.yaml
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |

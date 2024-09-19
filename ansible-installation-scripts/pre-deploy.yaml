@@ -12,8 +12,7 @@
     go_install_path: "/usr/local"
     epel_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
   environment:
-    PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
-    GOPATH: "/usr/local/go"
+    PATH: "/usr/local/bin:/usr/bin:/usr/local/go/bin:{{ ansible_env.PATH }}"
   tasks:
     - name: Download Go tarball
       ansible.builtin.get_url:
@@ -34,13 +33,13 @@
         dest: "{{ go_install_path }}"
         remote_src: yes
 
-    - name: Ensure Go binary path is in the environment
-      ansible.builtin.shell: |
-        "export PATH=$PATH:/usr/local/go/bin:/usr/local/bin"
+    - name: Update PATH
+      ansible.builtin.command: |
+              bash -c 'export PATH=$PATH:/usr/local/go/bin:/usr/local/bin'
 
     - name: Verify Go installation
       ansible.builtin.command: |
-        'go version'
+            bash -c 'go version'
       register: go_version_output
       changed_when: false
 
@@ -83,7 +82,7 @@
 
     - name: Verify Helm installation
       ansible.builtin.shell: |
-        "helm version"
+        bash -c "helm version"
       register: helm_version_output
       changed_when: false
 
@@ -114,3 +113,4 @@
         dest: /home/kni/flightctl
         update: yes
       ignore_errors: true
+
