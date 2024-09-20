@@ -10,10 +10,9 @@
     flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
     flightctl_ui_image_url: "oci://quay.io/flightctl/charts/flightctl-ocp-ui"
     flightctl_namespace: "flightctl"
-    flightctl_version: "0.2.0-39-g597deaf"
-    flightctl_ui_version: "0.2.0-11-ge8c643e"
+    flightctl_version: "0.2.0-60-gab3d8a2"
+    flightctl_ui_version: "0.2.2"
     api_url: "https://api.apps.ocp-edge-cluster-0.qe.lab.redhat.com"
-    ca_file: "~/.flightctl/certs/ca.crt"
     ansible_user: kni
   environment:
     PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
