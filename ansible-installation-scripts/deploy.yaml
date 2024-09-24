@@ -21,7 +21,12 @@
     - name: Copy myvalues.yaml to ~/flightctl/deploy/helm/flightctl/myvalues.yaml
       ansible.builtin.copy:
         src: "{{ myvalues_file }}"
-        dest: /home/kni//flightctl/deploy/helm/flightctl/myvalues.yaml
+        dest: /home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml
+    
+    - name: Delete flightctl namespace
+      ansible.builtin.shell: |
+        oc delete namespace flightctl
+      ignore_errors: true
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
