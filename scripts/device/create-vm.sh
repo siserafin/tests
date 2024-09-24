@@ -1,9 +1,9 @@
-sudo podman login quay.io -u ${QUAY_USER} -p ${QUAY_PASSWORD}
+sudo podman login quay.io -u ${QUAYUSER} -p ${QUAY_PASSWORD}
 cp agentconfig.yaml ~/flightctl-demo/images/bootc/centos-bootc/
 cp Containerfile ~/flightctl-demo/images/bootc/centos-bootc/
 cd ~/flightctl-demos
-make bootc-centos QUAYUSER=${QUAY_USER} # the quay.io repository must be set to public
-make qcow2-bootc QUAYUSER=${QUAY_USER} flavor=centos
+make bootc-centos QUAYUSER=${QUAYUSER} # the quay.io repository must be set to public
+make qcow2-bootc QUAYUSER=${QUAYUSER} flavor=centos
 
 #Create the VM
 export VMNAME=flightctl-device-centos
@@ -18,4 +18,6 @@ sudo virt-install --name $VMNAME \
          --tpm backend.type=emulator,backend.version=2.0,model=tpm-tis \
                                    --vcpus $VMCPUS \
                                    --memory $VMRAM \
+
+export IP=$(ip route get 1.1.1.1 | grep -oP 'src \K\S+')
 
