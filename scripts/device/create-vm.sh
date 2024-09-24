@@ -1,14 +1,4 @@
-#Export QUAY_USER and QUAY_PASSWORD with your quay.io account
-#Pre-requisite. Have Containerfile in /home/kni
-
-git clone git@github.com:flightctl/flightctl-demos.git ~/
-openssl ecparam -name secp521r1 -genkey -noout -out myeckey.pem
-openssl req -new -sha256 -key myeckey.pem -out mycsr.csr
-./flightctl/bin/flightctl csr-generate mycsr.csr -e 604800 -n mycsr -o myoutputfile -y
-./flightctl/bin/flightctl       apply -f myoutputfile
-./flightctl/bin/flightctl approve csr/mycsr
 sudo podman login quay.io -u ${QUAY_USER} -p ${QUAY_PASSWORD}
-./flightctl/bin/flightctl enrollmentconfig mycsr --private-key myeckey.pem > agentconfig.yaml
 cp agentconfig.yaml ~/flightctl-demo/images/bootc/centos-bootc/
 cp Containerfile ~/flightctl-demo/images/bootc/centos-bootc/
 cd ~/flightctl-demos
@@ -28,8 +18,4 @@ sudo virt-install --name $VMNAME \
          --tpm backend.type=emulator,backend.version=2.0,model=tpm-tis \
                                    --vcpus $VMCPUS \
                                    --memory $VMRAM \
-                                   --import --disk $VMDISK,format=qcow2 \
-                                   --os-variant fedora-eln  \
-                                   --autoconsole text \
-                                   --wait $VMWAIT \
-                                   --transient || true
+
