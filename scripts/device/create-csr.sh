@@ -1,3 +1,4 @@
+~/flightctl/bin/flightctl delete csr/mycsr
 rm mycsr.csr 
 rm myeckey.pem  
 rm myoutputfile
