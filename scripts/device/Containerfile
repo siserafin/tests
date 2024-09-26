@@ -1,10 +1,8 @@
 FROM quay.io/centos-bootc/centos-bootc:stream9
 ADD etc etc
 
-RUN dnf -y copr enable @redhat-et/flightctl-dev centos-stream-9-x86_64 && \
-	dnf update -y && dnf install -y flightctl-agent && \
-	systemctl enable flightctl-agent.service
-
+RUN dnf install -y flightctl-agent && \
+    systemctl enable flightctl-agent.service
 ## Uncomment to add your own ssh key
 # COPY flightctl_rsa.pub /usr/etc-system/root.keys
 # RUN touch /etc/ssh/sshd_config.d/30-auth-system.conf; \
@@ -17,7 +15,9 @@ RUN dnf -y copr enable @redhat-et/flightctl-dev centos-stream-9-x86_64 && \
 
 RUN useradd -ms /bin/bash user && \
 	echo "user:user" | chpasswd && \
-	echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+	echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+        echo "10.46.46.54 agent-api.apps.ocp-edge-cluster-0.qe.lab.redhat.com" > /etc/hosts
 
 
 ADD agentconfig.yaml /etc/flightctl/config.yaml
+
