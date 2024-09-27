@@ -107,6 +107,12 @@
         state: present
         disable_gpg_check: true
 
+    - name: Delete the flightctl folder
+      file:
+        path: /home/kni/flightctl
+        state: absent
+      ignore_errors: true
+
     - name: Clone flightctl repository
       ansible.builtin.git:
         repo: "{{ flightctl_repo }}"
