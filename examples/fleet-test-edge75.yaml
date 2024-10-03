@@ -13,6 +13,19 @@ spec:
       labels:
         fleet: no-template
     spec:
-      config: []
+      config:
+         - name: motd-update
+          configType: InlineConfigProviderSpec
+          inline:
+            ignition:
+              version: 3.4.0
+            storage:
+              files:
+                - contents:
+                    source: >-
+                      data:,iTeam%20{{ device.metadata.name }}%20is%20managed%20by%20flightctl.%0A
+                  mode: 422
+                  overwrite: true
+                  path: "/etc/motd"
       os:
         image: quay.io/sserafin/flightctl-agent-centos     
