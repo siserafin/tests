@@ -1,0 +1,19 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  annotations:
+  labels: {}
+  name: no-template
+spec:
+  selector:
+    matchLabels:
+      "no": template
+  template:
+    metadata:
+      labels:
+        fleet: no-template
+    spec:
+      config: []
+      os:
+        image: quay.io/sserafin/flightctl-agent-centos
+~                                                         
