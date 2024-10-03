@@ -14,6 +14,12 @@ spec:
         fleet: no-template
     spec:
       config:
+        - name: test-crd
+          configType: HttpConfigProviderSpec
+          httpRef:
+            repository: http
+            suffix: /agent-registration/crds/v1
+            filePath: /tmp/klusterlet/crd.yaml
         - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
