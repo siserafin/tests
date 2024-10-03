@@ -14,7 +14,7 @@ spec:
         fleet: no-template
     spec:
       config:
-         - name: motd-update
+        - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
             ignition:
