@@ -1,0 +1,27 @@
+global:
+  flightctl:
+    baseDomain: "apps.ocp-edge-cluster-0.qe.lab.redhat.com"
+    clusterLevelSecretAccess: true
+    useRoutes: true
+    networkPolicyAllowList:
+      - openshift-console
+  storageClassName: "standard"
+flightctl:
+  api:
+    auth:
+      enabled: true
+      openShiftApiUrl: "https://api.ocp-edge-cluster-0.qe.lab.redhat.com:6443"
+      insecureSkipTlsVerify: true
+keycloak:
+  enabled: false
+
+# ui configuration
+flightctlUi:
+  namespace: flightctl
+  image: quay.io/flightctl/flightctl-ocp-ui:0.2.0
+  flightctlServer: https://flightctl-api:3443
+  flightctlMetricsServer: https://flightctl-api:9090
+  flightctlGrpcServer: flightctl-api-agent-grpc:7444
+  certs:
+    ca: "" # use --set-file flightctlUi.certs.ca=ca.crt
+

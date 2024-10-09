@@ -10,8 +10,6 @@
     flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
     flightctl_ui_image_url: "oci://quay.io/flightctl/charts/flightctl-ocp-ui"
     flightctl_namespace: "flightctl"
-    flightctl_version: "0.2.2"
-    flightctl_ui_version: "0.2.2"
     api_url: "https://api.apps.ocp-edge-cluster-0.qe.lab.redhat.com"
     ansible_user: kni
   environment:
@@ -30,7 +28,7 @@
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
-        helm install --version={{ flightctl_version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
+        helm install  --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
       args:
         chdir: /home/kni/flightctl
       ignore_errors: true
@@ -49,23 +47,6 @@
         oc exec -n flightctl {{ api_pod_name.stdout }} -- cat /root/.flightctl/certs/ca.crt > ca.crt
       args:
         chdir: /home/kni/flightctl
-
-    - name: Add git config
-      ansible.builtin.command: |
-        git config --global --add safe.directory /home/kni/flightctl
-      args:
-        chdir: /home/kni/flightctl
-
-    - name: Install flightctl UI plugin with Helm
-      ansible.builtin.shell: |
-        helm upgrade --install --version={{ flightctl_ui_version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl-ui {{ flightctl_ui_image_url }} --values {{ values_file }} --set-file flightctlUi.certs.ca=ca.crt
-      args:
-        chdir: /home/kni/flightctl
-      ignore_errors: true
-
-    - name: Verify devices and pods {{ flightctl_namespace }}
-      ansible.builtin.shell: |
-        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s
 
     - name: Build flightctl cli
       ansible.builtin.command: |

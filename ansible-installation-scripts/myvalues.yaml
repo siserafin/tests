@@ -1,0 +1,10 @@
+global:
+  target: acm
+  storageClassName: standard //or keep empty to use the default storage class
+api:
+  image:
+    tag: latest
+ui:
+  image:
+    tag: latest
+
