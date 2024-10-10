@@ -1,6 +1,34 @@
 global:
   target: acm
   storageClassName: standard
+  auth:
+    type: "openshift"
+    openShiftApiUrl: "https://api.ocp-edge-cluster-0.qe.lab.redhat.com:6443"
+    caCert: "ca.cert"
+    insecureSkipTlsVerify: true
+  metrics:
+    enabled: true
+
+## @section Compoment specific parameters
+## @descriptionStart This section provides individual parameters for each component
+## @descriptionEnd
+
+db:
+  image:
+    tag: latest
+api:
+  image:
+    tag:  0.2.1-146-gd3a98d4
+worker:
+  image:
+    tag: ""
+periodic:
+  image:
+    tag: ""
+rabbitmq:
+  enabled: true
+  image:
+    tag: 3.13-management
 api:
   image:
     tag: latest
