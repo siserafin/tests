@@ -29,7 +29,7 @@
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
-        helm install  --version {{ version }}--namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
+        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
       args:
         chdir: /home/kni/flightctl
       ignore_errors: true
