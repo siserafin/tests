@@ -21,8 +21,8 @@ spec:
             targetRevision: main
             path: "/fleet-test.yaml"
         - configType: InlineConfigProviderSpec
-          inline:
           name: motd
+          inline:
             - content: "This system is managed by flightctl"
               mode: 422
               overwrite: true
