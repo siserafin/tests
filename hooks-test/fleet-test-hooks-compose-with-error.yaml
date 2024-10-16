@@ -1,15 +1,15 @@
 apiVersion: v1alpha1
 kind: Fleet
 metadata:
-  name: test-templating
+  name: my-fleet
 spec:
   selector:
     matchLabels:
-      fleet: test-templating
+      key: value
   template:
     metadata:
       labels:
-        fleet: test-templating
+        fleet: my-fleet
     spec:
       os:
         image: 192.168.1.15:5000/flightctl-device:base
@@ -23,7 +23,7 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:text/plain;base64,dmVyc2lvbjogJzMuOScKCnNlcnZpY2VzOgogIHNoOgogICAgaW1hZ2U6IHF1YXkuaW8vc3NlcmFmaW4vdGVzdDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBjb21tYW5kOiBbInB5dGhvbiIsICJhcHAucHkiXQo=
+                      data:text/plain;base64,dmVyc2lvbjogJzMuOScKCnNlcnZpY2VzOgogIHNoOgogICAgaW1hZ2U6IHF1YXkuaW8vc3NlcmFmaW4vdGVzdDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBjb21tYW5kOiBbInB5dGhvbiIsICJub3QtZXhpc3RpbmcucHkiXQo=
                   mode: 422
                   overwrite: true
                   path: "/var/run/flightctl/compose/compose.yml"

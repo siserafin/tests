@@ -1,0 +1,51 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  labels: {}
+  name: acm-test
+spec:
+  selector:
+    matchLabels:
+      fleet: acm
+  template:
+    metadata:
+      generation: 1
+      labels:
+        fleet: acm-test
+    spec:
+      hooks:
+        afterUpdating:
+          - path: "/var/local/crd.yaml"
+            onFile: [Create]
+            actions:
+              - executable:
+                  run: "kubectl apply -f /var/local/crd.yaml"
+                  envVars: ["KUBECONFIG=/var/lib/microshift/resources/kubeadmin/kubeconfig"]
+                  workDir: "/usr/bin/"
+          - path: "/var/local/import.yaml"
+            onFile: [Create]
+            actions:
+              - executable:
+                  run: KUBECONFIG=/var/lib/microshift/resources/kubeadmin/kubeconfig /usr/bin/kubectl apply -f /var/local/import.yaml
+      config:
+      - configType: HttpConfigProviderSpec
+        httpRef:
+          filePath: /var/local/crd.yaml
+          repository: acm-test
+          suffix: /agent-registration/crds/v1
+        name: acm-crd
+      - configType: HttpConfigProviderSpec
+        httpRef:
+          filePath: /var/local/import.yaml
+          repository: acm-test
+          suffix: /agent-registration/manifests/{{ device.metadata.name }}
+        name: acm-import
+      - configType: GitConfigProviderSpec
+        gitRef:
+          repository: ricky-super-secrets
+          targetRevision: main
+          path: /configuration/etc/crio
+          mountPath: /etc/crio
+        name: ricky-super-secrets
+      os:
+        image: 192.168.0.135:5000/flightctl-device:update

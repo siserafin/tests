@@ -1,20 +1,26 @@
 apiVersion: v1alpha1
 kind: Fleet
 metadata:
-  name: test-templating
+  name: my-fleet
 spec:
   selector:
     matchLabels:
-      fleet: test-templating
+      key: value
   template:
     metadata:
       labels:
-        fleet: test-templating
+        fleet: my-fleet
     spec:
       os:
         image: 192.168.1.15:5000/flightctl-device:base
       config:
-        - name: simple-app
+        - name: v2
+          configType: GitConfigProviderSpec
+          gitRef:
+            repository: tests
+            targetRevision: main
+            path: "/{{ .Name }}"
+        - name: motd-update
           configType: InlineConfigProviderSpec
           inline:
             ignition:
@@ -23,10 +29,10 @@ spec:
               files:
                 - contents:
                     source: >-
-                      data:text/plain;base64,dmVyc2lvbjogJzMuOScKCnNlcnZpY2VzOgogIHNoOgogICAgaW1hZ2U6IHF1YXkuaW8vc3NlcmFmaW4vdGVzdDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBjb21tYW5kOiBbInB5dGhvbiIsICJhcHAucHkiXQo=
+                      data:,iTeam%20{{ .Labels["team"] }}%20is%20managed%20by%20flightctl.%0A
                   mode: 422
                   overwrite: true
-                  path: "/var/run/flightctl/compose/compose.yml"
+                  path: "/etc/motd"
       resources:
         - monitorType: CPU
           alertRules:
@@ -38,4 +44,3 @@ spec:
       systemd:
         matchPatterns:
           - chronyd.service
-

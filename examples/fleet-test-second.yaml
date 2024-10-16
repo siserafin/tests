@@ -1,15 +1,15 @@
 apiVersion: v1alpha1
 kind: Fleet
 metadata:
-  name: test
+  name: second
 spec:
   selector:
     matchLabels:
-      fleet: test
+      fleet: second
   template:
     metadata:
       labels:
-        fleet: test
+        fleet: second
     spec:
       os:
         image: 192.168.1.140:5000/flightctl-device:base

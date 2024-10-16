@@ -1,0 +1,20 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: default
+spec:
+  selector:
+    matchLabels:
+      fleet: default
+  template:
+    metadata:
+      labels:
+        fleet: default
+    spec:
+      applications:
+        - name: compose-oci-example
+          image: quay.io/sbatsche/oci-example-app:latest
+          envVars:
+            FFO: FOO
+            SIMPLE: VALUE
+            SOME_KEY: "{{ device.metadata.labels[fleet] }}"

@@ -1,0 +1,27 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: my-fleet
+spec:
+  selector:
+    matchLabels:
+      key: value
+  template:
+    metadata:
+      labels:
+        fleet: my-fleet
+    spec:
+      config:
+        - name: simple-app
+          configType: InlineConfigProviderSpec
+          inline:
+            ignition:
+              version: 3.4.0
+            storage:
+              files:
+                - contents:
+                    source: >-
+                      data:text/plain;base64,dmVyc2lvbjogJzMuOScKCnNlcnZpY2VzOgogIHNoOgogICAgaW1hZ2U6IHF1YXkuaW8vc3NlcmFmaW4vdGVzdDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI0MDAwOjQwMDAiCiAgICBjb21tYW5kOiBbInB5dGhvbiIsICJub3QtZXhpc3RpbmcucHkiXQo=
+                  mode: 422
+                  overwrite: true
+                  path: "/var/run/flightctl/compose/compose.yml"
