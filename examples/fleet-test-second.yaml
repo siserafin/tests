@@ -21,11 +21,11 @@ spec:
             targetRevision: main
             path: "/fleet-test.yaml"
         - configType: InlineConfigProviderSpec
-        inline:
-          - content: "This system is managed by flightctl"
-            mode: 422
-            overwrite: true
-            path: /etc/motd
+          inline:
+            - content: "This system is managed by flightctl"
+              mode: 422
+              overwrite: true
+              path: /etc/motd
       resources:
         - monitorType: CPU
           alertRules:
