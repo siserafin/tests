@@ -5,6 +5,7 @@
   gather_facts: true
   vars:
     version: latest
+    ui-version: "0.2.2-8-gc82f028"
     kubeconfig_path: "/home/kni/clusterconfigs/auth/kubeconfig"
     values_file: "/home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml"
     myvalues_file: "/home/kni/myvalues.yaml"
@@ -29,7 +30,7 @@
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
-        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }}
+        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }} --set ui.image.tag={{ ui-version }}
       args:
         chdir: /home/kni/flightctl
       ignore_errors: true
