@@ -1,7 +1,7 @@
 apiVersion: v1alpha1
 kind: Fleet
 metadata:
-  name: test-templatin
+  name: test-templating
 spec:
   selector:
     matchLabels:
