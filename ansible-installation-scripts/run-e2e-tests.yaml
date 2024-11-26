@@ -1,0 +1,62 @@
+---
+  - name: Run flightctl e2e tests
+    hosts: "{{ 'provisionhost[0]' if groups.get('provisionhost') else 'localhost' }}"
+    gather_facts: true
+
+    environment:
+      PATH: "/usr/local/bin:/usr/bin:/usr/local/go/bin:{{ ansible_env.PATH }}"
+    tasks:
+      - name: Read kubeadmin password
+        ansible.builtin.slurp:
+          src: ~/clusterconfigs/auth/kubeadmin-password
+        register: kubeadmin_password_file
+
+      - name: Set kubeadmin password fact
+        set_fact:
+          kubeadmin_password: "{{ kubeadmin_password_file.content | b64decode }}"
+
+      - name: Log in (obtain access token)
+        ansible.builtin.command:
+          cmd: oc login -u kubeadmin -p {{ kubeadmin_password }}
+
+      - name: Ensure dnf package manager is up-to-date
+        become: yes
+        ansible.builtin.yum:
+          name: dnf
+          state: latest
+
+      - name: Install Vagrant
+        become: yes
+        ansible.builtin.yum:
+          name: vagrant
+          state: present
+
+      - name: Install Vagrant libvirt plugin
+        ansible.builtin.command:
+          cmd: vagrant plugin install vagrant-libvirt
+          chdir: ~/flightctl
+        args:
+          creates: ~/.vagrant.d/plugins.json # Prevents reinstalling if already present
+
+      - name: Enable virtnetworkd
+        ansible.builtin.command:
+          cmd: sudo systemctl enable --now virtnetworkd
+          chdir: ~/flightctl
+
+      - name: Bring up Vagrant machine with libvirt provider
+        ansible.builtin.command:
+          cmd: vagrant up --provider libvirt
+          chdir: ~/flightctl
+        register: vagrant_up_output
+
+      - name: SSH into Vagrant and run in-cluster tests
+        ansible.builtin.shell: |
+          vagrant ssh -c "
+            cd /vagrant &&
+            export FLIGHTCTL_NS=flightctl &&
+            export KUBEADMIN_PASSWORD={{ kubeadmin_password }} &&
+            oc login -u kubeadmin -p {{ kubeadmin_password }} https://api.ocp-edge-cluster-0.qe.lab.redhat.com:6443  --insecure-skip-tls-verify &&
+            make in-cluster-e2e-test
+          "
+        args:
+          chdir: ~/flightctl
