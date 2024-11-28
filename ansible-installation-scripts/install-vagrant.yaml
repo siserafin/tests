@@ -38,10 +38,25 @@
         args:
           creates: ~/.vagrant.d/plugins.json # Prevents reinstalling if already present
 
+      - name: Upgrade Vagrant plugins
+        ansible.builtin.command:
+          cmd: vagrant plugin update
+          chdir: ~/flightctl
+        args:
+          creates: ~/.vagrant.d/plugins.json # Prevents reinstalling if already present
+
+
       - name: Enable virtnetworkd
         ansible.builtin.command:
           cmd: sudo systemctl enable --now virtnetworkd
           chdir: ~/flightctl
+      
+      - name: Clean old vagrant machines
+        ansible.builtin.command:
+          cmd: vagrant destroy 
+          chdir: ~/flightctl
+        register: vagrant_up_output
+        ignore_errors: true
 
       - name: Bring up Vagrant machine with libvirt provider
         ansible.builtin.command:
