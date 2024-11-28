@@ -29,7 +29,7 @@
         become: yes
         ansible.builtin.yum:
           name: vagrant
-          state: present
+          state: latest
 
       - name: Install Vagrant libvirt plugin
         ansible.builtin.command:
