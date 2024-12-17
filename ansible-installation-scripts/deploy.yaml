@@ -5,7 +5,7 @@
   gather_facts: true
   vars:
     version: latest
-    ui_version: "0.2.2-49-gc1c7f07"
+    ui_version: "latest"
     kubeconfig_path: "/home/kni/clusterconfigs/auth/kubeconfig"
     values_file: "/home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml"
     myvalues_file: "/home/kni/myvalues.yaml"
