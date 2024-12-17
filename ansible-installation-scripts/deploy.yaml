@@ -22,7 +22,13 @@
       ansible.builtin.copy:
         src: "{{ myvalues_file }}"
         dest: /home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml
-    
+  
+    - name: Provision a 60Gi persistent volume for the db pod
+      ansible.builtin.shell: |
+        PV_NAME=$(oc get pv --no-headers | awk '$3 == "RWO"' | awk '$5 == "Available" {print $1; exit}')
+        oc patch pv $PV_NAME --type merge -p '{"spec": {"capacity": {"storage": "60Gi"}}}'
+      ignore_errors: true
+
     - name: Delete flightctl namespace
       ansible.builtin.shell: |
         oc delete namespace flightctl
