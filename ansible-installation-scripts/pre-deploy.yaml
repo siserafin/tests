@@ -33,9 +33,9 @@
         dest: "{{ go_install_path }}"
         remote_src: yes
 
-    - name: Update PATH
-      ansible.builtin.command: |
-              bash -c 'export PATH=$PATH:/usr/local/go/bin:/usr/local/bin'
+#    - name: Update PATH
+#      ansible.builtin.command: |
+#              bash -c 'export PATH=$PATH:/usr/local/go/bin:/usr/local/bin'
 
     - name: Verify Go installation
       ansible.builtin.command: |
