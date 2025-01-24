@@ -7,8 +7,7 @@
     version: latest
     ui_version: "latest"
     kubeconfig_path: "/home/kni/clusterconfigs/auth/kubeconfig"
-    values_file: "/home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml"
-    myvalues_file: "/home/kni/myvalues.yaml"
+    values_file: "/home/kni/flightctl/deploy/helm/flightctl/values.yaml"
     flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
     flightctl_ui_image_url: "oci://quay.io/flightctl/charts/flightctl-ocp-ui"
     flightctl_namespace: "flightctl"
@@ -18,11 +17,6 @@
     PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
     KUBECONFIG: "{{ kubeconfig_path }}"
   tasks:
-    - name: Copy myvalues.yaml to ~/flightctl/deploy/helm/flightctl/myvalues.yaml
-      ansible.builtin.copy:
-        src: "{{ myvalues_file }}"
-        dest: /home/kni/flightctl/deploy/helm/flightctl/myvalues.yaml
-  
     - name: Provision a 60Gi persistent volume for the db pod
       ansible.builtin.shell: |
         PV_NAME=$(oc get pv --no-headers | awk '$3 == "RWO"' | awk '$5 == "Available" {print $1; exit}')
@@ -36,7 +30,7 @@
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
-        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }} --set ui.image.tag={{ ui_version }} --set  prometheus.enabled=false
+        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }} --set ui.image.tag={{ ui_version }} --set  prometheus.enabled=false --set global.target=acm --set global.storageClassName=standard --set global.auth.insecureSkipTlsVerify=true
       args:
         chdir: /home/kni/flightctl
       ignore_errors: true
