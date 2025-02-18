@@ -37,7 +37,7 @@
 
     - name: Verify devices and pods {{ flightctl_namespace }}
       ansible.builtin.shell: |
-        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s --field-selector=status.phase=Succeeded,status.phase=Running,status.phase=Pending 
+        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s  
 
     - name: Retrieve API pod name
       ansible.builtin.shell: |
