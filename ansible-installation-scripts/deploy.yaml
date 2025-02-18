@@ -30,14 +30,14 @@
 
     - name: Install flightctl with Helm
       ansible.builtin.shell: |
-        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }} --set ui.image.tag={{ ui_version }} --set  prometheus.enabled=false --set global.target=acm --set global.storageClassName=standard --set global.auth.insecureSkipTlsVerify=true
+        helm install  --version {{ version }} --namespace {{ flightctl_namespace }} --create-namespace flightctl {{ flightctl_image_url }} --values {{ values_file }} --set ui.image.tag={{ ui_version }} --set  prometheus.enabled=false --set global.target=acm --set global.storageClassName=standard --set global.auth.insecureSkipTlsVerify=true 
       args:
         chdir: /home/kni/flightctl
       ignore_errors: true
 
     - name: Verify devices and pods {{ flightctl_namespace }}
       ansible.builtin.shell: |
-        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s
+        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s --field-selector=status.phase=Running
 
     - name: Retrieve API pod name
       ansible.builtin.shell: |
