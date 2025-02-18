@@ -37,7 +37,7 @@
 
     - name: Verify devices and pods {{ flightctl_namespace }}
       ansible.builtin.shell: |
-        oc wait --for=condition=Ready pod --all -n {{ flightctl_namespace }} --timeout=300s  
+        oc get pods -n  {{ flightctl_namespace }} --no-headers | grep -v 'secrets' | awk '{print $1}' | xargs -I {} oc wait --for=condition=ready pod/{} -n {{ flightctl_namespace }} --timeout=300s  
 
     - name: Retrieve API pod name
       ansible.builtin.shell: |
