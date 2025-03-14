@@ -1,0 +1,96 @@
+---
+- name: Install flightctl in disconnected OCP
+  gather_facts: no
+  hosts: "{{ 'provisionhost[0]' if groups.get('provisionhost') else 'localhost' }}"
+  remote_user: kni
+  vars:
+    version: $(curl -s -X GET "https://quay.io/api/v1/repository/flightctl/charts/flightctl/tag/" | jq -r '.tags[0].name')
+    ui_version: $(curl -s -X GET "https://quay.io/api/v1/repository/flightctl/flightctl-ocp-ui/tag/" | jq -r '.tags[0].name')
+    kubeconfig_path: "/home/kni/clusterconfigs/auth/kubeconfig"
+    values_file: "/home/kni/flightctl/deploy/helm/flightctl/values.yaml"
+    flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
+    flightctl_namespace: "flightctl"
+    pull_secret_path: "private-mirror-secret.json"
+    ansible_user: kni
+  environment:
+    PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  tasks:
+    - name: Set LOCAL_REGISTRY variable
+      shell: |
+        echo "$(oc get imagecontentsourcepolicy -ojson |jq -r '.items[].spec.repositoryDigestMirrors')$(oc get ImageDigestMirrorSet -ojson |jq -r '.items[].spec.imageDigestMirrors')$(oc get ImageTagMirrorSet -ojson |jq -r '.items[].spec.imageTagMirrors')"|jq -r '.[].mirrors|.[]' |awk -F '/' '{print $1}' |sed 's/ //g' |sort -u |head -n +1
+      register: local_registry_output
+
+    - name: Export LOCAL_REGISTRY
+      set_fact:
+        LOCAL_REGISTRY: "{{ local_registry_output.stdout }}"
+
+    - name: Mirror flightctl component images
+      shell: |
+        # Loop over components
+        for component in api periodic worker; do
+          oc image mirror -a {{ pull_secret_path }} quay.io/flightctl/flightctl-$component:{{ version }} {{ LOCAL_REGISTRY }}/flightctl/flightctl-$component:{{ version }};
+        done
+
+        # List of additional images to mirror
+        declare -A images
+        images["quay.io/flightctl/flightctl-ocp-ui:{{ ui_version }}"]="flightctl/flightctl-ocp-ui:{{ ui_version }}"
+        images["quay.io/keycloak/keycloak:25.0.1"]="keycloak/keycloak:25.0.1"
+        images["quay.io/openshift/origin-cli:4.20.0"]="openshift/origin-cli:4.20.0"
+        images["quay.io/sclorg/postgresql-16-c9s:20250214"]="sclorg/postgresql-16-c9s:20250214"
+        images["quay.io/sclorg/redis-7-c9s:20250108"]="sclorg/redis-7-c9s:20250108"
+        images["quay.io/flightctl-tests/alpine:v1"]="flightctl-tests/alpine:v1"
+        images["quay.io/flightctl/e2eregistry:2"]="flightctl/e2eregistry:2"
+        images["quay.io/flightctl/ci-rpm-builder:latest"]="flightctl/ci-rpm-builder:latest"
+
+        # Loop through and mirror each image
+        for image in "${!images[@]}"; do
+          oc image mirror -a {{ pull_secret_path }} $image {{ LOCAL_REGISTRY }}/${images[$image]};
+        done
+      args:
+        executable: /bin/bash
+    - name: Apply ImageTagMirrorSet
+      shell: |
+        oc apply -f - <<EOF
+        apiVersion: config.openshift.io/v1
+        kind: ImageTagMirrorSet
+        metadata:
+          name: image-mirror
+        spec:
+           imageTagMirrors:
+           - source: quay.io
+             mirrors:
+             - ${LOCAL_REGISTRY}
+        EOF
+      environment:
+        LOCAL_REGISTRY: "{{ LOCAL_REGISTRY }}"
+
+    - name: Wait for the nodes to reboot
+      shell:
+        oc wait --for=condition=Ready nodes --all --timeout=500s
+
+    - name: Delete flightctl namespace
+      ansible.builtin.shell: |
+        oc delete namespace flightctl
+      ignore_errors: true
+
+    - name: Pull helm chart
+      shell: |
+        helm pull {{ flightctl_image_url }} --version {{ version }}
+
+    - name: Install flightctl helm chart
+      shell: |
+        helm upgrade --install --namespace {{ flightctl_namespace }} --create-namespace {{ flightctl_namespace }} ./flightctl-{{ version }}.tgz --set db.storage.size=30Gi --set global.target=acm --set ui.image.tag={{ ui_version }} --set kv.image.image=quay.io/sclorg/redis-7-c9s
+      environment:
+        OC_KUBECONFIG: "{{ kubeconfig_path }}"
+
+    - name: Verify devices and pods {{ flightctl_namespace }}
+      ansible.builtin.shell: |
+        oc wait --for=condition=Available deployment --all -n flightctl --timeout=300s
+
+    - name: Build flightctl cli
+      ansible.builtin.command: |
+        make
+      args:
+        chdir: /home/kni/flightctl
+
