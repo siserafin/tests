@@ -65,12 +65,23 @@
       environment:
         LOCAL_REGISTRY: "{{ LOCAL_REGISTRY }}"
 
-    - name: Wait for the nodes to reboot
-      shell:
-        oc wait --for=condition=Ready nodes --all --timeout=500s
+    - name: Pause for 1 minute
+      pause:
+        seconds: 60
+
+    - name: Wait for no nodes to be in 'SchedulingDisabled' state
+      shell: |
+        while oc get nodes --no-headers | grep 'SchedulingDisabled' > /dev/null; do
+          echo "Waiting for nodes to no longer be in 'SchedulingDisabled' state..."
+          sleep 10
+        done
+      register: result
+      retries: 30  
+      delay: 10    
+      failed_when: false
 
     - name: Delete flightctl namespace
-      ansible.builtin.shell: |
+      shell: |
         oc delete namespace flightctl
       ignore_errors: true
 
@@ -85,11 +96,11 @@
         OC_KUBECONFIG: "{{ kubeconfig_path }}"
 
     - name: Verify devices and pods {{ flightctl_namespace }}
-      ansible.builtin.shell: |
+      shell: |
         oc wait --for=condition=Available deployment --all -n flightctl --timeout=300s
 
     - name: Build flightctl cli
-      ansible.builtin.command: |
+      command: |
         make
       args:
         chdir: /home/kni/flightctl
