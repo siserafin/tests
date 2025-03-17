@@ -10,7 +10,7 @@
     values_file: "/home/kni/flightctl/deploy/helm/flightctl/values.yaml"
     flightctl_image_url: "oci://quay.io/flightctl/charts/flightctl"
     flightctl_namespace: "flightctl"
-    pull_secret_path: "private-mirror-secret.json"
+    pull_secret_path: "/home/kni/private-mirror-secret.json"
     ansible_user: kni
   environment:
     PATH: "/usr/local/bin:/usr/bin/:/usr/local/go/bin:{{ ansible_env.PATH }}"
