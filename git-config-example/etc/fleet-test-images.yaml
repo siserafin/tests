@@ -1,0 +1,28 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: test-templating-main
+spec:
+  selector:
+    matchLabels:
+      fleet: test-templating
+  template:
+    metadata:
+      labels:
+        fleet: test-templating
+    spec:
+      os:
+        image: quay.io/sserafin/flightctl-agent-centos:v3 
+      config: []
+      resources:
+        - monitorType: CPU
+          alertRules:
+            - severity: Warning
+              duration: 10m
+              percentage: 60
+              description: 'CPU load is above 50% for more than 10 minutes'
+          samplingInterval: 50s
+      systemd:
+        matchPatterns:
+          - chronyd.service
+
