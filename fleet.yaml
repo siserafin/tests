@@ -1,0 +1,30 @@
+apiVersion: flightctl.io/v1alpha1
+kind: Fleet
+metadata:
+  annotations:
+    fleet-controller/templateVersion: test-fleet-1
+  creationTimestamp: "2025-08-01T08:10:08.661993Z"
+  generation: 1
+  labels:
+    fleet: test
+  name: test-fleet
+  resourceVersion: "3"
+spec:
+  selector:
+    matchLabels:
+      fleet: test
+  template:
+    metadata:
+      labels:
+        fleet: test-fleet
+    spec:
+      applications: []
+      config: []
+status:
+  conditions:
+  - lastTransitionTime: "2025-08-01T08:10:08.874998998Z"
+    message: ""
+    reason: Valid
+    status: "True"
+    type: Valid
+
