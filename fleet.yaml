@@ -7,8 +7,10 @@ metadata:
   generation: 1
   labels:
     fleet: test
+    label: test
   name: test-fleet
-  resourceVersion: "3"
+  owner: ResourceSync/test
+  resourceVersion: "4"
 spec:
   selector:
     matchLabels:
