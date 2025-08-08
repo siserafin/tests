@@ -1,0 +1,17 @@
+apiVersion: v1alpha1
+kind: Fleet
+metadata:
+  name: basic-nginx-fleet
+spec:
+  selector:
+    matchLabels:
+      fleet: basic-nginx-fleet
+  template:
+    spec:
+      config: []
+      systemd:
+        matchPatterns:
+          - "flightctl-agent@test-this.service"
+          - "microshift.service"
+          - "crio.service"
+          - "flightctl-agent.service"
