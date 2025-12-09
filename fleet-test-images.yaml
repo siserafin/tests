@@ -10,6 +10,7 @@ spec:
     metadata:
       labels:
         fleet: test-templating
+        new: label
     spec:
       os:
         image: quay.io/sserafin/flightctl-agent-centos:v3 
